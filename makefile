@@ -1,15 +1,19 @@
-all: main.o
-	gcc -o program main.o
+all: control write
 
-main.o: main.c
-	gcc -c main.c
+control: control.o
+	gcc -o control control.o
 
-run:
-	./program
+write: write.o
+	gcc -o write write.o
+
+write.o: write.c
+	gcc -c write.c
+
+control.o: control.c
+	gcc -c control.c
 
 clean:
 	rm *.o
-	rm program
-
-comprun: all
-	./program
+	rm control
+	rm write
+	rm *.txt
