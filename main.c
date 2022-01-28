@@ -1,35 +1,36 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#include <string.h>
-#include <errno.h>
+#include <stdlib.h>
+#include <time.h>
 
-int main(){
+int main() {
+    printf("Parent is forking...\n");
+    srand(time(NULL));
 
-  srand(time(NULL));
+    int fork1 = fork(), fork2;
+    if (fork1) {
+        rand();
+        fork2 = fork();
+    }
 
-  printf("Forking...\n");
-  int f1 = fork();
-  int f2;
+    if (fork1 && fork2) {
+        int status;
+        int pid = wait(&status);
 
-  if(f1) f2 = fork();
-  if(f1 && f2){
-    int stat;
-    int pid = wait(&stat);
+        printf("Parent: Child pid %d slept for %d seconds!\n", pid, WEXITSTATUS(status));
+        printf("Parent is done!\n");
+        return 0;
+    } else {
+        printf("Child pid: %d\n", getpid());
 
-    printf("child pid: %d\t asleep for %d second\n", stat, pid);
-    printf("parent process complete\n");
-  }
+        int seconds = (rand() % 4) + 2;
+        sleep(seconds);
 
-  else{
-    printf("child pid:%d\n ", getpid());
-    int i = rand() % 4 + 2; // gets a number from 2 to 5
-    sleep(i);
-    printf("child %d done\n", getpid());
-    return i;
-  }
+        printf("Child slept for %d seconds\n", seconds);
 
-  return 0;
+        return seconds;
+    }
+
+    return 0;
 }
